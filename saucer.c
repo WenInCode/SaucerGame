@@ -1,7 +1,10 @@
-#include "locks.h"
-#include "saucer.h"
+#include 	"locks.h"
+#include 	"saucer.h"
+#include 	"scores.h"
 
 #define TUNIT 20000		/* time units in microseconds */
+
+pthread_mutex_t	escaped = PTHREAD_MUTEX_INITIALIZER; 
 
 static void	initSaucer(struct saucer *, int, int);
 
@@ -19,14 +22,14 @@ void *setupSaucer() {
 	 * initliaze the saucers
 	 */
 	for (i = 0; i < MAX_SAUCERS; i++) {
-		initSaucer(&saucers[i], rand()%15, 1+(rand()%15));
+		saucers[i].isAlive = 0;
 	}
 
 	while (1) {
 
 		for(i=0 ; i<MAX_SAUCERS; i++){
 			if (saucers[i].isAlive == 0) {
-				saucers[i].isAlive = 1;
+				initSaucer(&saucers[i], rand()%15, 1+(rand()%15));
 				pthread_create(&sThread[i], NULL, animateSaucer, &saucers[i]);
 				break;
 			} 
@@ -48,14 +51,14 @@ void initSaucer(struct saucer *ship, int col, int delay) {
 	ship->length = SAUCER_LEN;
 	ship->row = col;
 	ship->delay = delay;
-	ship->isAlive = 0;
+	ship->isAlive = 1;
 }
 
 void *animateSaucer(void *arg) {
 	struct saucer *ship = arg;
 	int len = ship->length+2;
 	int col = 0;	/* might need to review this */
-						/* could possibly set speed here */
+
 	while (1) {
 		usleep(ship->delay*TUNIT);
 	
@@ -79,8 +82,14 @@ void *animateSaucer(void *arg) {
 		}
 
 		if (col >= COLS) {
-		//	ship->isAlive = 0;
-			pthread_exit(NULL);
+			pthread_mutex_lock(&escaped);
+			noEscaped++;	
+			pthread_mutex_unlock(&escaped);
+			displayInfo();
+			break;
 		}
 	}
+	
+	ship->isAlive = 0;
+	pthread_exit(NULL);
 }

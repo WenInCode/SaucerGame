@@ -5,5 +5,6 @@
 
 /* The Input thread */
 extern pthread_mutex_t mx;
+extern pthread_mutex_t escaped;
 
 #endif

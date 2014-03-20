@@ -16,112 +16,81 @@
 #include	<unistd.h>
 #include	<string.h>
 
-#include "locks.h"
-#include "saucer.h"
+#include	"cannon.h"
+#include 	"locks.h"
+#include 	"saucer.h"
+#include 	"scores.h"
 
 #define	MAXMSG	10		/* limit to number of strings	*/
 #define	TUNIT   20000		/* timeunits in microseconds */
 
+static void 	setup();
+
 pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
+
+int 	noEscaped = 0;
+int	rocketsLeft = STARTING_ROCKETS;
 
 int main(int ac, char *av[])
 {
 	int	       c;		/* user input		*/
-	pthread_t      thrds[MAXMSG];	/* the threads		*/
 	pthread_t	saucerSetup;
-	struct saucer  props[MAXMSG];	/* properties of string	*/
 	void	       *animate();	/* the function		*/
 	int	       num_msg ;	/* number of strings	*/
 	int	     i;
 
-	num_msg = setup(ac-1,av+1,props);
-
-	/* create all the threads */
-/*	for(i=0 ; i<num_msg; i++)
-		if ( pthread_create(&thrds[i], NULL, animate, &props[i])){
-			fprintf(stderr,"error creating thread");
-			endwin();
-			exit(0);
-		}
-*/
-	pthread_create(&saucerSetup, NULL, setupSaucer, NULL); 	
+	setup();
+	setupCannon();
+	displayCannon();
+	displayInfo();
+	
+	if (pthread_create(&saucerSetup, NULL, setupSaucer, NULL)) {
+		endwin();
+		exit(0);
+	} 	
 
 	/* process user input */
 	while(1) {
 		c = getch();
-		if ( c == 'Q' ) break;
-		if ( c == ' ' )
-			for(i=0;i<num_msg;i++)
-				//props[i].dir = -props[i].dir;
-		if ( c >= '0' && c <= '9' ){
-			i = c - '0';
-			if ( i < num_msg ) {}
-			//	props[i].dir = -props[i].dir;
+		/*switch (c) {
+		case 'Q':
+			break;
+		case ',':
+			moveCannon(-1);
+			break;
+		case '.':
+			moveCannon(1);
+			break;
+		default:
+			break;
+		}*/
+		if ( c == 'Q' ){
+			 break;
+		} else if (c == ',') {
+			moveCannon(-1);
+		} else if (c == '.') {
+			moveCannon(1);
 		}
 	}
 
 	/* cancel all the threads */
 	pthread_mutex_lock(&mx);
-	for (i=0; i<num_msg; i++ )
-		pthread_cancel(thrds[i]);
+	//for (i=0; i<num_msg; i++ )
+	//	pthread_cancel(thrds[i]);
 	endwin();
 	return 0;
 }
 
-int setup(int nstrings, char *strings[], struct saucer props[])
+void setup()
 {
 	//int num_msg = ( nstrings > MAXMSG ? MAXMSG : nstrings );
 	int num_msg = 1;
 	int i;
-
-	/* assign rows and velocities to each string */
-	//srand(getpid());
-	//for(i=0 ; i<num_msg; i++){
-	//	props[i].str = "<--->";	/* the message	*/
-	//	props[i].length = 5;
-	//	props[i].row = i;		/* the row	*/
-	//	props[i].delay = 1+(rand()%15);	/* a speed	*/
-	//	props[i].dir = ((rand()%2)?1:-1);	/* +1 or -1	*/
-	//}
 
 	/* set up curses */
 	initscr();
 	crmode();
 	noecho();
 	clear();
-	mvprintw(LINES-1,0,"'Q' to quit, '0'..'%d' to bounce",num_msg-1);
-
-	return num_msg;
-}
-
-/* the code that runs in each thread */
-void *animate(void *arg)
-{
-	struct saucer *info = arg;		/* point to info block	*/
-	int	len = info->length+2;	/* +2 for padding	*/
-	int	col = rand()%(COLS-len-3);	/* space for padding	*/
-
-	while( 1 )
-	{
-		usleep(info->delay*TUNIT);
-
-		pthread_mutex_lock(&mx);	/* only one thread	*/
-		   move( info->row, col );	/* can call curses	*/
-		   addch(' ');			/* at a the same time	*/
-		 //  addstr( info->str );		/* Since I doubt it is	*/
-		   addch(' ');			/* reentrant		*/
-		   move(LINES-1,COLS-1);	/* park cursor		*/
-		   refresh();			/* and show it		*/
-		pthread_mutex_unlock(&mx);	/* done with curses	*/
-
-		/* move item to next column and check for bouncing	*/
-
-		/*col += info->dir;
-
-		if ( col <= 0 && info->dir == -1 )
-			info->dir = 1;
-		else if (  col+len >= COLS && info->dir == 1 )
-			info->dir = -1;
-*/
-	}
+	mvprintw(LINES-1,0,"'Q' to quit");
 }
