@@ -13,6 +13,7 @@ struct	cannon {
 };
 
 void	setupCannon();
+int 	getCannonCol();
 void	moveCannon(int);
 void	displayCannon();
 

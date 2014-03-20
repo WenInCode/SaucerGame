@@ -18,6 +18,10 @@ void setupCannon() {
 	cn.delay = 1;
 }
 
+int getCannonCol() {
+	return cn.col;
+}
+
 void moveCannon(int dir) {
 	pthread_mutex_lock(&mx);
 	move(LINES-2, cn.col);
