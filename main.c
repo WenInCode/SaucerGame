@@ -18,10 +18,12 @@
 
 #include	"cannon.h"
 #include 	"locks.h"
+#include	"rockets.h"
 #include 	"saucer.h"
 #include 	"scores.h"
 
 #define	MAXMSG	10		/* limit to number of strings	*/
+#define MAX_ROCKETS 200		
 #define	TUNIT   20000		/* timeunits in microseconds */
 
 static void 	setup();
@@ -33,14 +35,18 @@ int	rocketsLeft = STARTING_ROCKETS;
 
 int main(int ac, char *av[])
 {
-	int	       c;		/* user input		*/
+	int	       	c;		/* user input		*/
 	pthread_t	saucerSetup;
-	void	       *animate();	/* the function		*/
-	int	       num_msg ;	/* number of strings	*/
-	int	     i;
+	pthread_t	rocketThreads[MAX_ROCKETS];
+	struct rocket 	rockets[MAX_ROCKETS];
+	void	      	*animate();	/* the function		*/
+	int	       	num_msg ;	/* number of strings	*/
+	int	     	i;
+	int		col;
 
 	setup();
 	setupCannon();
+	setRocketsToDead(&rockets);
 	displayCannon();
 	displayInfo();
 	
@@ -52,25 +58,23 @@ int main(int ac, char *av[])
 	/* process user input */
 	while(1) {
 		c = getch();
-		/*switch (c) {
-		case 'Q':
-			break;
-		case ',':
-			moveCannon(-1);
-			break;
-		case '.':
-			moveCannon(1);
-			break;
-		default:
-			break;
-		}*/
+
 		if ( c == 'Q' ){
 			 break;
 		} else if (c == ',') {
 			moveCannon(-1);
 		} else if (c == '.') {
 			moveCannon(1);
-		}
+		} else if (c == ' ') {
+			col = getCannonCol();
+			for (i = 0; i < MAX_ROCKETS; i++) {
+				if (rockets[i].isAlive == 0) {
+				/*
+				 * COMEB ACKS TO HERE 
+				 */
+				}
+			}
+		}	
 	}
 
 	/* cancel all the threads */
