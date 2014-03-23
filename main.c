@@ -31,7 +31,7 @@ static void 	setup();
 pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
 
 int 	noEscaped = 0;
-int	rocketsLeft = STARTING_ROCKETS;
+int	rocketsLeft = MAX_ROCKETS;
 
 int main(int ac, char *av[])
 {
@@ -46,7 +46,7 @@ int main(int ac, char *av[])
 
 	setup();
 	setupCannon();
-	setRocketsToDead(&rockets);
+	setRocketsToDead(rockets);
 	displayCannon();
 	displayInfo();
 	
@@ -67,11 +67,20 @@ int main(int ac, char *av[])
 			moveCannon(1);
 		} else if (c == ' ') {
 			col = getCannonCol();
-			for (i = 0; i < MAX_ROCKETS; i++) {
-				if (rockets[i].isAlive == 0) {
-				/*
-				 * COMEB ACKS TO HERE 
-				 */
+		
+			if (rocketsLeft > 0) {	
+				rocketsLeft -= 1;
+				/*	
+				pthread_mutex_lock(&mx);
+				pthread_mutex_unlock(&mx);
+				*/	
+				displayInfo();
+				for (i = 0; i < MAX_ROCKETS; i++) {
+					if (rockets[i].isAlive == 0) {
+						rockets[i].col = col;
+						pthread_create(&rocketThreads[i], NULL, setupRocket, &rockets[i]);	
+						break;
+					}
 				}
 			}
 		}	

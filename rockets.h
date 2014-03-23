@@ -17,7 +17,7 @@ struct rocket {
 	int 	isAlive;		/* is the rocket still on screen */
 };
 
-void 	setRocketsToDead();
+void 	setRocketsToDead(struct rocket *);
 void 	*setupRocket(void *);
 
 #endif

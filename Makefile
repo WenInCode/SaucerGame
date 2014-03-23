@@ -7,7 +7,7 @@ game:		scores.o saucer.o rockets.o cannon.o main.o
 scores.o:	locks.h scores.h scores.c
 	$(CC) -c scores.c $(FLAGS) -o scores.o
 
-rockets.o:	locks.h rockets.h rockets.c
+rockets.o:	locks.h rockets.h scores.h rockets.c
 	$(CC) -c rockets.c $(FLAGS) -o rockets.o
 
 cannon.o:	locks.h cannon.h cannon.c
