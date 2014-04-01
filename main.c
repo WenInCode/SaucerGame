@@ -27,9 +27,12 @@
 #define	TUNIT   20000		/* timeunits in microseconds */
 
 static void 	setup();
+static void	shootRocket();
 
 pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
 
+pthread_t	rocketThreads[MAX_ROCKETS];
+struct rocket 	rockets[MAX_ROCKETS];
 int 	noEscaped = 0;
 int	rocketsLeft = MAX_ROCKETS;
 
@@ -37,12 +40,8 @@ int main(int ac, char *av[])
 {
 	int	       	c;		/* user input		*/
 	pthread_t	saucerSetup;
-	pthread_t	rocketThreads[MAX_ROCKETS];
-	struct rocket 	rockets[MAX_ROCKETS];
 	void	      	*animate();	/* the function		*/
 	int	       	num_msg ;	/* number of strings	*/
-	int	     	i;
-	int		col;
 
 	setup();
 	setupCannon();
@@ -66,19 +65,7 @@ int main(int ac, char *av[])
 		} else if (c == '.') {
 			moveCannon(1);
 		} else if (c == ' ') {
-			col = getCannonCol();
-		
-			if (rocketsLeft > 0) {	
-				rocketsLeft -= 1;
-				displayInfo();
-				for (i = 0; i < MAX_ROCKETS; i++) {
-					if (rockets[i].isAlive == 0) {
-						rockets[i].col = col;
-						pthread_create(&rocketThreads[i], NULL, setupRocket, &rockets[i]);	
-						break;
-					}
-				}
-			}
+			shootRocket();	
 		}	
 	}
 
@@ -88,6 +75,24 @@ int main(int ac, char *av[])
 	//	pthread_cancel(thrds[i]);
 	endwin();
 	return 0;
+}
+
+void shootRocket() {
+	int 	i;
+	int 	col = getCannonCol();
+		
+	if (rocketsLeft > 0) {	
+		rocketsLeft -= 1;
+		displayInfo();
+		for (i = 0; i < MAX_ROCKETS; i++) {
+			if (rockets[i].isAlive == 0) {
+				rockets[i].col = col;
+				pthread_create(&rocketThreads[i], NULL, setupRocket, &rockets[i]);	
+				break;
+			}
+		}
+	}
+			
 }
 
 
