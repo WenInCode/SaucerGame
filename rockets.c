@@ -27,8 +27,9 @@ void initRocket(struct rocket *r) {
 	strncpy(r->message, ROCKET, ROCKET_LEN);
 	r->length = ROCKET_LEN;
 	r->row = LINES - 3;
-	r->delay = 5;
+	r->delay = 1;
 	r->dir = -1; 		/* moving up! */
+	r->hit = 0;
 	r->isAlive = 1;
 }
 
@@ -60,6 +61,15 @@ void animateRocket(struct rocket *r) {
 		move(LINES-1, COLS-1);
 		refresh();
 		pthread_mutex_unlock(&mx);
+
+		if (r->hit == 1) {
+			pthread_mutex_lock(&mx);
+			move(r->row, r->col);
+			addch(' ');
+			move(LINES-1, COLS-1);	
+			pthread_mutex_unlock(&mx);
+			break;
+		}
 
 		if (r->row <= 0) {
 			pthread_mutex_lock(&mx);

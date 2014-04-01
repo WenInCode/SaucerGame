@@ -14,6 +14,7 @@ struct rocket {
 	int 	col;			/* current column */
 	int	delay;
 	int	dir;
+	int	hit;
 	int 	isAlive;		/* is the rocket still on screen */
 };
 

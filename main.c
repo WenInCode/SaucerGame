@@ -29,6 +29,7 @@
 static void 	setup();
 static void	shootRocket();
 static void 	*collisionDetection();
+static void 	compareCoords(int i, int j); 
 
 pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
 
@@ -136,22 +137,30 @@ void *collisionDetection() {
 	while (1) {
 		for (i = 0; i < MAX_SAUCERS; i++) {
 			for (j = 0; j < MAX_ROCKETS; j++) {
-				/*
-				 * Check here if any coords match
-				 */ 
-				if (saucers[i].row == rockets[j].row 
-				    && rockets[i].col >= saucers[i].col
-				    && rockets[i].col <= (saucers[i].col + saucers[i].length)) {
-					/*
-					 * hit
-					 */
-					saucers[i].hit = 1;
-				}
+				compareCoords(i, j);	
 			}
 		} 
 	}
 }
 
+void compareCoords(int i, int j) {
+	/*
+	 * Check here if any coords match
+	 */ 
+	if (saucers[i].isAlive == 1 
+		&& rockets[j].isAlive == 1) {
+		if ((saucers[i].row == rockets[j].row 
+		    || (saucers[i].row + 1) == rockets[j].row)
+		    && rockets[j].col > saucers[i].col
+		    && rockets[j].col <= (saucers[i].col + saucers[i].length)) {
+			/*
+			 * hit
+		 	 */
+			saucers[i].hit = 1;
+			rockets[j].hit = 1;
+		}
+	}
+}
 
 void setup()
 {
