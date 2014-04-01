@@ -28,11 +28,16 @@
 
 static void 	setup();
 static void	shootRocket();
+static void 	*collisionDetection();
 
 pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_t	rocketThreads[MAX_ROCKETS];
 struct rocket 	rockets[MAX_ROCKETS];
+
+pthread_t	sThread[MAX_SAUCERS];
+struct saucer saucers[MAX_SAUCERS];
+
 int 	noEscaped = 0;
 int	rocketsLeft = MAX_ROCKETS;
 
@@ -40,6 +45,7 @@ int main(int ac, char *av[])
 {
 	int	       	c;		/* user input		*/
 	pthread_t	saucerSetup;
+	pthread_t	collisionThread;
 	void	      	*animate();	/* the function		*/
 	int	       	num_msg ;	/* number of strings	*/
 
@@ -53,6 +59,7 @@ int main(int ac, char *av[])
 		endwin();
 		exit(0);
 	} 	
+	pthread_create(&collisionThread, NULL, collisionDetection, NULL);
 
 	/* process user input */
 	while(1) {
@@ -93,6 +100,56 @@ void shootRocket() {
 		}
 	}
 			
+}
+
+void *setupSaucer() {
+	int num_msg = 1;
+	int i;
+
+	/* assign rows and velocities to each string */
+	srand(getpid());
+
+	/*
+	 * initliaze the saucers
+	 */
+	for (i = 0; i < MAX_SAUCERS; i++) {
+		saucers[i].isAlive = 0;
+	}
+
+	while (1) {
+
+		for(i=0 ; i<MAX_SAUCERS; i++){
+			if (saucers[i].isAlive == 0) {
+				initSaucer(&saucers[i], rand()%15, 1+(rand()%15));
+				pthread_create(&sThread[i], NULL, animateSaucer, &saucers[i]);
+				break;
+			} 
+		}
+
+		sleep(1+(rand()%15));
+	}
+}
+
+void *collisionDetection() {
+	int i, j;
+
+	while (1) {
+		for (i = 0; i < MAX_SAUCERS; i++) {
+			for (j = 0; j < MAX_ROCKETS; j++) {
+				/*
+				 * Check here if any coords match
+				 */ 
+				if (saucers[i].row == rockets[j].row 
+				    && rockets[i].col >= saucers[i].col
+				    && rockets[i].col <= (saucers[i].col + saucers[i].length)) {
+					/*
+					 * hit
+					 */
+					saucers[i].hit = 1;
+				}
+			}
+		} 
+	}
 }
 
 

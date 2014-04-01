@@ -15,10 +15,13 @@ struct	saucer {
 	char	message[SAUCER_LEN];	/* the message */
 	int 	length;		/* the saucer length */
 	int	row;			/* the row     */
+	int	col;
 	int	delay;  		/* delay in time units */
+	int	hit;
 	int	isAlive;		/* +1 or -1	*/
 };
 
+void initSaucer(struct saucer *, int, int);
 void *setupSaucer();
 void *animateSaucer(void *);
 
