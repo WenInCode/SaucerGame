@@ -23,7 +23,7 @@
 #include 	"scores.h"
 
 #define	MAXMSG	10		/* limit to number of strings	*/
-#define MAX_ROCKETS 200		
+#define ENDGAME 15		/* end game condition */
 #define	TUNIT   20000		/* timeunits in microseconds */
 
 static void 	setup();
@@ -44,11 +44,13 @@ int	rocketsLeft = MAX_ROCKETS;
 
 int main(int ac, char *av[])
 {
-	int	       	c;		/* user input		*/
+	int	       	c, endGame;		/* user input		*/
 	pthread_t	saucerSetup;
 	pthread_t	collisionThread;
 	void	      	*animate();	/* the function		*/
-	int	       	num_msg ;	/* number of strings	*/
+	int	       	num_msg;	/* number of strings	*/
+	
+	endGame = 0;
 
 	setup();
 	setupCannon();
@@ -65,14 +67,17 @@ int main(int ac, char *av[])
 	/* process user input */
 	while(1) {
 		c = getch();
+		if (noEscaped >= ENDGAME) {
+			endGame = 1;
+		}	
 
 		if ( c == 'Q' ){
 			 break;
-		} else if (c == ',') {
+		} else if (c == ',' && !endGame) {
 			moveCannon(-1);
-		} else if (c == '.') {
+		} else if (c == '.' && !endGame) {
 			moveCannon(1);
-		} else if (c == ' ') {
+		} else if (c == ' ' && !endGame) {
 			shootRocket();	
 		}	
 	}
