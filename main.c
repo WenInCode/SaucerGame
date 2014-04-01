@@ -70,10 +70,6 @@ int main(int ac, char *av[])
 		
 			if (rocketsLeft > 0) {	
 				rocketsLeft -= 1;
-				/*	
-				pthread_mutex_lock(&mx);
-				pthread_mutex_unlock(&mx);
-				*/	
 				displayInfo();
 				for (i = 0; i < MAX_ROCKETS; i++) {
 					if (rockets[i].isAlive == 0) {
@@ -93,6 +89,7 @@ int main(int ac, char *av[])
 	endwin();
 	return 0;
 }
+
 
 void setup()
 {
