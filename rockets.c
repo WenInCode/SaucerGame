@@ -67,6 +67,7 @@ void animateRocket(struct rocket *r) {
 			move(r->row, r->col);
 			addch(' ');
 			move(LINES-1, COLS-1);	
+			refresh();
 			pthread_mutex_unlock(&mx);
 			break;
 		}
@@ -76,6 +77,7 @@ void animateRocket(struct rocket *r) {
 			move(r->row, r->col);
 			addch(' ');	
 			move(LINES-1, COLS-1);
+			refresh();
 			pthread_mutex_unlock(&mx);
 			break;
 		}
