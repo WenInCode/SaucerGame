@@ -4,7 +4,7 @@
 
 #define ROCKET "^"
 #define ROCKET_LEN 1
-#define MAX_ROCKETS 200
+#define MAX_ROCKETS 25
 #define TUNIT 20000 
 
 struct rocket {
@@ -21,4 +21,5 @@ struct rocket {
 void 	setRocketsToDead(struct rocket *);
 void 	*setupRocket(void *);
 
+extern int rocketsLeft;
 #endif

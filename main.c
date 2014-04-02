@@ -22,7 +22,6 @@
 #include 	"saucer.h"
 #include 	"scores.h"
 
-#define	MAXMSG	10		/* limit to number of strings	*/
 #define ENDGAME 15		/* end game condition */
 #define	TUNIT   20000		/* timeunits in microseconds */
 
@@ -30,6 +29,8 @@ static void 	setup();
 static void	shootRocket();
 static void 	*collisionDetection();
 static void 	compareCoords(int i, int j); 
+static void 	printEndGameMessage();
+static void 	*checkEndConditions();
 
 pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
 
@@ -39,19 +40,21 @@ struct rocket 	rockets[MAX_ROCKETS];
 pthread_t	sThread[MAX_SAUCERS];
 struct saucer saucers[MAX_SAUCERS];
 
+pthread_t	saucerSetup;
+
 int 	noEscaped = 0;
+int 	endGame = 0;
 int	rocketsLeft = MAX_ROCKETS;
 
 int main(int ac, char *av[])
 {
-	int	       	c, endGame;		/* user input		*/
-	pthread_t	saucerSetup;
+	int	       	i, c;		/* user input		*/
+	//pthread_t	saucerSetup;
 	pthread_t	collisionThread;
+	pthread_t	gameMonitor;
 	void	      	*animate();	/* the function		*/
 	int	       	num_msg;	/* number of strings	*/
 	
-	endGame = 0;
-
 	setup();
 	setupCannon();
 	setRocketsToDead(rockets);
@@ -63,13 +66,11 @@ int main(int ac, char *av[])
 		exit(0);
 	} 	
 	pthread_create(&collisionThread, NULL, collisionDetection, NULL);
+	pthread_create(&gameMonitor, NULL, checkEndConditions, NULL);
 
 	/* process user input */
 	while(1) {
 		c = getch();
-		if (noEscaped >= ENDGAME) {
-			endGame = 1;
-		}	
 
 		if ( c == 'Q' ){
 			 break;
@@ -84,10 +85,46 @@ int main(int ac, char *av[])
 
 	/* cancel all the threads */
 	pthread_mutex_lock(&mx);
-	//for (i=0; i<num_msg; i++ )
-	//	pthread_cancel(thrds[i]);
+	for (i=0; i < MAX_ROCKETS; i++) {
+		pthread_cancel(rocketThreads[i]);
+	}
+	pthread_cancel(collisionThread);
+	pthread_cancel(gameMonitor);
 	endwin();
 	return 0;
+}
+
+void *checkEndConditions() {
+	int i;
+
+	while (1) {
+		if (noEscaped >= ENDGAME) {
+			endGame = 1;
+			printEndGameMessage();
+			break;
+		}
+	}
+
+	for (i = 0; i < MAX_SAUCERS; i++) {
+		pthread_cancel(sThread[i]);
+	}
+	pthread_cancel(saucerSetup);
+}
+
+void printEndGameMessage() {
+	char *gameOver = "GAME OVER!!!";
+	char *saucerMessage = "-TOO MANY SAUCERS ESCAPED-";
+	char *quitMessage = "PRESS Q TO QUIT";
+	pthread_mutex_lock(&mx);
+	move(((LINES-1)/2), (((COLS-1)/2)-10));
+	addstr(gameOver);
+	move((((LINES-1)/2)+1), (((COLS-1)/2)-10));
+	addstr(saucerMessage);
+	move((((LINES-1)/2)+2), (((COLS-1)/2)-10));
+	addstr(quitMessage);
+	move(LINES-1, COLS-1);	
+	refresh();
+	pthread_mutex_unlock(&mx);
 }
 
 void shootRocket() {

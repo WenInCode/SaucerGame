@@ -69,6 +69,9 @@ void animateRocket(struct rocket *r) {
 			move(LINES-1, COLS-1);	
 			refresh();
 			pthread_mutex_unlock(&mx);
+
+			rocketsLeft++;
+			displayInfo();
 			break;
 		}
 
