@@ -30,6 +30,7 @@ static void	shootRocket();
 static void 	*collisionDetection();
 static void 	compareCoords(int i, int j); 
 static void 	printEndGameMessage();
+static void 	printStartMessage();
 static void 	*checkEndConditions();
 
 pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
@@ -53,14 +54,28 @@ int main(int ac, char *av[])
 	pthread_t	collisionThread;
 	pthread_t	gameMonitor;
 	void	      	*animate();	/* the function		*/
-	int	       	num_msg;	/* number of strings	*/
 	
 	setup();
+	
+	/*
+	 * Display start screen, have the user press 'S' to start
+	 * the game.
+	 */
+	printStartMessage();
+	while (1) {
+		c = getch();
+		if (c == 'S') {
+			clear();
+			refresh();
+			break;
+		}
+	}	
+	
 	setupCannon();
 	setRocketsToDead(rockets);
 	displayCannon();
 	displayInfo();
-	
+
 	if (pthread_create(&saucerSetup, NULL, setupSaucer, NULL)) {
 		endwin();
 		exit(0);
@@ -109,6 +124,35 @@ void *checkEndConditions() {
 		pthread_cancel(sThread[i]);
 	}
 	pthread_cancel(saucerSetup);
+}
+
+void printStartMessage() {
+	char *titleMsg = "---SAUCER INVADERS!---";
+	char *rightMoveMsg = "Press ',' to move right";
+	char *leftMoveMsg = "Press '.' to move left";
+	char *shootMsg = "Press 'SPACE' to shoot a rocket";
+	char *quitMsg = "Press 'Q' to quit";
+	char *header = "--------------------------";
+	char *startMsg = "Press 'S' to start the game";
+
+	pthread_mutex_lock(&mx);
+	move(((LINES-1)/2), (((COLS-1)/2)-10));
+	addstr(titleMsg);
+	move((((LINES-1)/2)+1), (((COLS-1)/2)-10));
+	addstr(rightMoveMsg);
+	move((((LINES-1)/2)+2), (((COLS-1)/2)-10));
+	addstr(leftMoveMsg);
+	move((((LINES-1)/2)+3), (((COLS-1)/2)-10));
+	addstr(shootMsg);
+	move((((LINES-1)/2)+4), (((COLS-1)/2)-10));
+	addstr(quitMsg);
+	move((((LINES-1)/2)+5), (((COLS-1)/2)-10));
+	addstr(header);
+	move((((LINES-1)/2)+6), (((COLS-1)/2)-10));
+	addstr(startMsg);
+	move(LINES-1, COLS-1);	
+	refresh();
+	pthread_mutex_unlock(&mx);
 }
 
 void printEndGameMessage() {
@@ -206,14 +250,9 @@ void compareCoords(int i, int j) {
 
 void setup()
 {
-	//int num_msg = ( nstrings > MAXMSG ? MAXMSG : nstrings );
-	int num_msg = 1;
-	int i;
-
 	/* set up curses */
 	initscr();
 	crmode();
 	noecho();
 	clear();
-	mvprintw(LINES-1,0,"'Q' to quit");
 }
