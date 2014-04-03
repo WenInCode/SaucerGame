@@ -49,12 +49,14 @@ int	rocketsLeft = MAX_ROCKETS;
 
 int main(int ac, char *av[])
 {
-	int	       	i, c;		/* user input		*/
+	int	       	i, c, quitFlag;		/* user input		*/
 	//pthread_t	saucerSetup;
 	pthread_t	collisionThread;
 	pthread_t	gameMonitor;
 	void	      	*animate();	/* the function		*/
 	
+	quitFlag = 0;
+
 	setup();
 	
 	/*
@@ -67,6 +69,9 @@ int main(int ac, char *av[])
 		if (c == 'S') {
 			clear();
 			refresh();
+			break;
+		} else if (c == 'Q') {
+			quitFlag = 1;
 			break;
 		}
 	}	
@@ -84,10 +89,11 @@ int main(int ac, char *av[])
 	pthread_create(&gameMonitor, NULL, checkEndConditions, NULL);
 
 	/* process user input */
-	while(1) {
+	while(!quitFlag) {
 		c = getch();
 
-		if ( c == 'Q' ){
+		if ( c == 'Q' || quitFlag){
+			 quitFlag = 1;
 			 break;
 		} else if (c == ',' && !endGame) {
 			moveCannon(-1);
