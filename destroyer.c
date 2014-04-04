@@ -6,6 +6,7 @@
 
 #include "locks.h"
 #include "destroyer.h"
+#include "destroyerrocket.h"
 #include "scores.h"
 
 #define TUNIT 20000		/* time units in microseconds */
@@ -17,6 +18,7 @@ static void 	animateDestroyer(struct destroyer *);
  * present.
  */
 void *sendDestroyer(void *arg) {
+	pthread_t destRocketThread;
 	struct destroyer *ship = arg;
 	srand(getpid());
 
@@ -26,6 +28,7 @@ void *sendDestroyer(void *arg) {
 		
 			// initialize the destroyer
 			initDestroyer(ship, rand()%15, 1+(rand()%10));
+			pthread_create(&destRocketThread, NULL, shootDestRocket, ship);
 			animateDestroyer(ship);
 		}	
 	}

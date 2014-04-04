@@ -2,9 +2,8 @@
 #define _DESTROYER_H_
 #include <stdlib.h>
 
-#define DESTROYER_TOP "  -------^-------  \0"
+#define DESTROYER_TOP "  -------^-------  "
 #define DESTROYER_BOT "<[_______________]>"
-#define DESTROYER_ROCKET "  vvvvvvvvvvvvvvv  "
 #define DESTROYER_LEN 19
 #define MAX_DESTROYERS 1
 

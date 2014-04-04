@@ -23,6 +23,8 @@
 #include 	"saucer.h"
 #include 	"scores.h"
 
+#include 	"destroyerrocket.h"
+
 #define ENDGAME 15		/* end game condition */
 #define	TUNIT   20000		/* timeunits in microseconds */
 
@@ -44,6 +46,7 @@ struct saucer saucers[MAX_SAUCERS];
 
 pthread_t	destroyerThread;
 struct destroyer destShip;
+struct destroyerRocket destRocket;
 
 pthread_t	saucerSetup;
 
