@@ -1,8 +1,11 @@
 CC := cc
 FLAGS := -lcurses -lpthread
 
-game:		scores.o saucer.o rockets.o cannon.o main.o
-	$(CC) main.o cannon.o rockets.o saucer.o scores.o $(FLAGS) -o game
+game:		scores.o saucer.o rockets.o destroyer.o cannon.o main.o
+	$(CC) main.o cannon.o destroyer.o rockets.o saucer.o scores.o $(FLAGS) -o game
+
+destroyer.o:	locks.h scores.h destroyer.h destroyer.c
+	$(CC) -c destroyer.c $(FLAGS) -o destroyer.o
 
 scores.o:	locks.h scores.h scores.c
 	$(CC) -c scores.c $(FLAGS) -o scores.o
