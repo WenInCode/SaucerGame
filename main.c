@@ -17,6 +17,7 @@
 #include	<string.h>
 
 #include	"cannon.h"
+#include	"destroyer.h"
 #include 	"locks.h"
 #include	"rockets.h"
 #include 	"saucer.h"
@@ -40,6 +41,9 @@ struct rocket 	rockets[MAX_ROCKETS];
 
 pthread_t	sThread[MAX_SAUCERS];
 struct saucer saucers[MAX_SAUCERS];
+
+pthread_t	destroyerThread;
+struct destroyer destShip;
 
 pthread_t	saucerSetup;
 
@@ -85,6 +89,7 @@ int main(int ac, char *av[])
 		endwin();
 		exit(0);
 	} 	
+	pthread_create(&destroyerThread, NULL, sendDestroyer, &destShip); 
 	pthread_create(&collisionThread, NULL, collisionDetection, NULL);
 	pthread_create(&gameMonitor, NULL, checkEndConditions, NULL);
 
