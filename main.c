@@ -29,7 +29,7 @@
 #define	TUNIT   20000		/* timeunits in microseconds */
 
 static void 	setup();
-static void	shootRocket();
+static void	shootRocket(int);
 static void 	*collisionDetection();
 static void 	compareCoords(int i, int j); 
 static void 	printEndGameMessage(char *);
@@ -57,7 +57,7 @@ int	rocketsLeft = MAX_ROCKETS;
 
 int main(int ac, char *av[])
 {
-	int	       	i, c, quitFlag;		/* user input		*/
+	int	       	i, c, quitFlag, twoPlayer;		/* user input		*/
 	pthread_t	collisionThread;
 	pthread_t	destCollisionThread;
 	pthread_t	gameMonitor;
@@ -74,7 +74,13 @@ int main(int ac, char *av[])
 	printStartMessage();
 	while (1) {
 		c = getch();
-		if (c == 'S') {
+		if (c == '1') {
+			twoPlayer = 0;
+			clear();
+			refresh();
+			break;
+		} else if (c == '2') {
+			twoPlayer = 1;
 			clear();
 			refresh();
 			break;
@@ -83,10 +89,16 @@ int main(int ac, char *av[])
 			break;
 		}
 	}	
-	
-	setupCannon();
+		
+
+	if (twoPlayer) {
+		setupCannon(2);	
+		displayCannon(2);
+	} else {
+		setupCannon(1);
+	}
 	setRocketsToDead(rockets);
-	displayCannon();
+	displayCannon(1);
 	displayInfo();
 
 	if (pthread_create(&saucerSetup, NULL, setupSaucer, NULL)) {
@@ -106,11 +118,17 @@ int main(int ac, char *av[])
 			 quitFlag = 1;
 			 break;
 		} else if (c == ',' && !endGame) {
-			moveCannon(-1);
+			moveCannon(-1, 1);
 		} else if (c == '.' && !endGame) {
-			moveCannon(1);
+			moveCannon(1, 1);
+		} else if (c == 'x' && !endGame) {
+			moveCannon(-1, 2);
+		} else if (c == 'c' && !endGame) {
+			moveCannon(1, 2);
+		} else if (c == 'z' && !endGame) {
+			shootRocket(2);
 		} else if (c == ' ' && !endGame) {
-			shootRocket();	
+			shootRocket(1);	
 		}	
 	}
 
@@ -134,7 +152,7 @@ void *checkEndConditions() {
 			endGame = 1;
 			printEndGameMessage("TOO MANY SAUCERS ESCAPED!");
 			break;
-		} else if (getCannonHit()) {
+		} else if (getCannonHit(1) || getCannonHit(2)) {
 			endGame = 1;
 			printEndGameMessage("YOUR DEFENSES WERE DESTROYED!");
 			break;
@@ -192,9 +210,9 @@ void printEndGameMessage(char *Message) {
 	pthread_mutex_unlock(&mx);
 }
 
-void shootRocket() {
+void shootRocket(int player) {
 	int 	i;
-	int 	col = getCannonCol();
+	int 	col = getCannonCol(player);
 		
 	if (rocketsLeft > 0) {	
 		rocketsLeft -= 1;
@@ -285,8 +303,9 @@ void compareCoords(int i, int j) {
 }
 
 void *checkDestRocketCollision() {
+	int col;
 	while (1) {
-		int col = getCannonCol();
+		col = getCannonCol(1);
 
 		if (destRocket.isAlive == 1
 			&& destRocket.col <= col
@@ -297,7 +316,21 @@ void *checkDestRocketCollision() {
 			 * HIT
 			 */
 			destRocket.hit = 1;
-			setCannonHit();			
+			setCannonHit(1);			
+		}
+		
+		col = getCannonCol(2);
+
+		if (destRocket.isAlive == 1
+			&& destRocket.col <= col
+			&& (destRocket.col + destRocket.length) >= col
+			&& destRocket.row >= LINES-3) {
+			
+			/*
+			 * HIT
+			 */
+			destRocket.hit = 1;
+			setCannonHit(2);			
 		}
 	}
 

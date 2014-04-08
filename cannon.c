@@ -59,22 +59,10 @@ void setCannonHit(int player) {
 
 void moveCannon(int dir, int player) {
 	if (player == 1) {
-		pthread_mutex_lock(&mx);
-		move(LINES-2, cn.col);
-		delch();
-		move(LINES-1, COLS-1);
-		pthread_mutex_unlock(&mx);
-
 		cn.col += dir;
 		if (cn.col >= COLS || cn.col <= 0)
 			cn.col -= dir;
 	} else {
-		pthread_mutex_lock(&mx);
-		move(LINES-2, cn2.col);
-		delch();
-		move(LINES-1, COLS-1);
-		pthread_mutex_unlock(&mx);
-
 		cn2.col += dir;
 		if (cn2.col >= COLS || cn2.col <= 0)
 			cn2.col -= dir;
@@ -88,11 +76,15 @@ void displayCannon(int player) {
 	pthread_mutex_lock(&mx);
 	
 	if (player == 1) {
-		move(LINES-2, cn.col);
+		move(LINES-2, cn.col-1);
+		addch(' ');
 		addstr(cn.message);
+		addch(' ');
 	} else {
-		move(LINES-2, cn2.col);
+		move(LINES-2, cn2.col-1);
+		addch(' ');
 		addstr(cn2.message);
+		addch(' ');
 	}
 
 	move(LINES-1, COLS-1);
