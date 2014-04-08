@@ -32,7 +32,7 @@ static void 	setup();
 static void	shootRocket();
 static void 	*collisionDetection();
 static void 	compareCoords(int i, int j); 
-static void 	printEndGameMessage();
+static void 	printEndGameMessage(char *);
 static void 	printStartMessage();
 static void 	*checkEndConditions();
 static void 	*checkDestRocketCollision();
@@ -132,11 +132,11 @@ void *checkEndConditions() {
 	while (1) {
 		if (noEscaped >= ENDGAME) {
 			endGame = 1;
-			printEndGameMessage();
+			printEndGameMessage("TOO MANY SAUCERS ESCAPED!");
 			break;
 		} else if (getCannonHit()) {
 			endGame = 1;
-			printEndGameMessage();
+			printEndGameMessage("YOUR DEFENSES WERE DESTROYED!");
 			break;
 		}
 	}
@@ -177,15 +177,14 @@ void printStartMessage() {
 	pthread_mutex_unlock(&mx);
 }
 
-void printEndGameMessage() {
+void printEndGameMessage(char *Message) {
 	char *gameOver = "GAME OVER!!!";
-	char *saucerMessage = "-TOO MANY SAUCERS ESCAPED-";
 	char *quitMessage = "PRESS Q TO QUIT";
 	pthread_mutex_lock(&mx);
 	move(((LINES-1)/2), (((COLS-1)/2)-10));
 	addstr(gameOver);
 	move((((LINES-1)/2)+1), (((COLS-1)/2)-10));
-	addstr(saucerMessage);
+	addstr(Message);
 	move((((LINES-1)/2)+2), (((COLS-1)/2)-10));
 	addstr(quitMessage);
 	move(LINES-1, COLS-1);	
