@@ -59,9 +59,29 @@ and individual rocket. It initializes the structure, updates the coordinates,
 and displays it to the screen.
 
 collisionThread:
+This thread is used to iterate through each live rocket and live saucer and
+check if they are occupying the same coordinates at any given time. If 
+they are then a collision has occured and the appropriate flags are raised.
 
 destCollisionThread:
+This thread is much like the collisionThread, except it checks if a destroyer
+rocket has collided with a user cannon. When a collision occurs, the 
+appropriate flags are raised and the game displays an end-game message.
 
 gameMonitor:
+gameMonitor is seperate thread that constantly checks the state of the game.
+If a game ending flag is raised it properly stops all the background operations
+pauses the output. It also displays the end-game messages.
 
 ** Critical Sections
+
+Each time a call to curses is made it must be in a critical section of code.
+So in each module that has an animate function there is at least one critical
+section of code that makes calls to curses which is monitored by a mutex lock.
+There is also a lock for the number of escaped saucers as that shared variable 
+is used in several places. 
+
+There are several shared resources that are not monitored because I felt that
+it was not necessary to lock down each shared resource. I locked the ones that 
+I knew needed to be, because if they weren't they could lead to odd outputs, or
+deadlocks. v

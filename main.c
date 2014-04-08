@@ -57,11 +57,11 @@ int	rocketsLeft = MAX_ROCKETS;
 
 int main(int ac, char *av[])
 {
-	int	       	i, c, quitFlag, twoPlayer;		/* user input		*/
+	int	       	i, c, quitFlag, twoPlayer;		
 	pthread_t	collisionThread;
 	pthread_t	destCollisionThread;
 	pthread_t	gameMonitor;
-	void	      	*animate();	/* the function		*/
+	void	      	*animate();	
 	
 	quitFlag = 0;
 
@@ -97,6 +97,7 @@ int main(int ac, char *av[])
 	} else {
 		setupCannon(1);
 	}
+	
 	setRocketsToDead(rockets);
 	displayCannon(1);
 	displayInfo();
