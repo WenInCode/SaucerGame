@@ -168,28 +168,47 @@ void *checkEndConditions() {
 
 void printStartMessage() {
 	char *titleMsg = "---SAUCER INVADERS!---";
+	char *playerOne = "PLAYER ONE CONTROLS:";
 	char *rightMoveMsg = "Press ',' to move right";
 	char *leftMoveMsg = "Press '.' to move left";
 	char *shootMsg = "Press 'SPACE' to shoot a rocket";
+	char *playerTwo = "PLAYER TWO CONTROLS:";
+	char *pTwoRightMoveMsg = "Press 'c' to move right";
+	char *pTwoLeftMoveMsg = "Press 'x' to move left";
+	char *pTwoShootMsg = "Press 'z' to shoot a rocket";
 	char *quitMsg = "Press 'Q' to quit";
 	char *header = "--------------------------";
-	char *startMsg = "Press 'S' to start the game";
+	char *startMsg = "Press '1' to start single player game";
+	char *pTwoStartMsg = "Press '2' to start two player game";
 
 	pthread_mutex_lock(&mx);
 	move(((LINES-1)/2), (((COLS-1)/2)-10));
 	addstr(titleMsg);
 	move((((LINES-1)/2)+1), (((COLS-1)/2)-10));
-	addstr(rightMoveMsg);
+	addstr(playerOne);
 	move((((LINES-1)/2)+2), (((COLS-1)/2)-10));
-	addstr(leftMoveMsg);
+	addstr(rightMoveMsg);
 	move((((LINES-1)/2)+3), (((COLS-1)/2)-10));
-	addstr(shootMsg);
+	addstr(leftMoveMsg);
 	move((((LINES-1)/2)+4), (((COLS-1)/2)-10));
-	addstr(quitMsg);
+	addstr(shootMsg);
 	move((((LINES-1)/2)+5), (((COLS-1)/2)-10));
-	addstr(header);
+	addstr(playerTwo);
 	move((((LINES-1)/2)+6), (((COLS-1)/2)-10));
+	addstr(pTwoRightMoveMsg);
+	move((((LINES-1)/2)+7), (((COLS-1)/2)-10));
+	addstr(pTwoLeftMoveMsg);
+	move((((LINES-1)/2)+8), (((COLS-1)/2)-10));
+	addstr(pTwoShootMsg);
+	move((((LINES-1)/2)+9), (((COLS-1)/2)-10));
+	addstr(quitMsg);
+	move((((LINES-1)/2)+10), (((COLS-1)/2)-10));
+	addstr(header);
+	move((((LINES-1)/2)+11), (((COLS-1)/2)-10));
 	addstr(startMsg);
+	move((((LINES-1)/2)+12), (((COLS-1)/2)-10));
+	addstr(pTwoStartMsg);
+
 	move(LINES-1, COLS-1);	
 	refresh();
 	pthread_mutex_unlock(&mx);
