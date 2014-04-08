@@ -67,7 +67,7 @@ void animateDestRocket() {
 		if (destRocket.row >= LINES-2) {
 			eraseDestroyerRocket();
 			break;
-		}			
+		}	
 	}
 	destRocket.isAlive = 0;
 }

@@ -35,6 +35,7 @@ static void 	compareCoords(int i, int j);
 static void 	printEndGameMessage();
 static void 	printStartMessage();
 static void 	*checkEndConditions();
+static void 	*checkDestRocketCollision();
 
 pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
 
@@ -57,8 +58,8 @@ int	rocketsLeft = MAX_ROCKETS;
 int main(int ac, char *av[])
 {
 	int	       	i, c, quitFlag;		/* user input		*/
-	//pthread_t	saucerSetup;
 	pthread_t	collisionThread;
+	pthread_t	destCollisionThread;
 	pthread_t	gameMonitor;
 	void	      	*animate();	/* the function		*/
 	
@@ -94,6 +95,7 @@ int main(int ac, char *av[])
 	} 	
 	pthread_create(&destroyerThread, NULL, sendDestroyer, &destShip); 
 	pthread_create(&collisionThread, NULL, collisionDetection, NULL);
+	pthread_create(&destCollisionThread, NULL, checkDestRocketCollision, NULL);
 	pthread_create(&gameMonitor, NULL, checkEndConditions, NULL);
 
 	/* process user input */
@@ -128,6 +130,10 @@ void *checkEndConditions() {
 
 	while (1) {
 		if (noEscaped >= ENDGAME) {
+			endGame = 1;
+			printEndGameMessage();
+			break;
+		} else if (getCannonHit()) {
 			endGame = 1;
 			printEndGameMessage();
 			break;
@@ -275,6 +281,25 @@ void compareCoords(int i, int j) {
                 rockets[j].hit = 1;
 		destShip.hit += 1;
 	}
+}
+
+void *checkDestRocketCollision() {
+	while (1) {
+		int col = getCannonCol();
+
+		if (destRocket.isAlive == 1
+			&& destRocket.col <= col
+			&& (destRocket.col + destRocket.length) >= col
+			&& destRocket.row >= LINES-3) {
+			
+			/*
+			 * HIT
+			 */
+			destRocket.hit = 1;
+			setCannonHit();			
+		}
+	}
+
 }
 
 void setup()

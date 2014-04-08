@@ -15,11 +15,20 @@ void setupCannon() {
 	strncpy(cn.message, CANNON, CANNON_LEN);
 	cn.length = CANNON_LEN;
 	cn.col = col;
+	cn.hit = 0;
 	cn.delay = 1;
 }
 
 int getCannonCol() {
 	return cn.col;
+}
+
+int getCannonHit() {
+	return cn.hit;
+}
+
+void setCannonHit() {
+	cn.hit = 1;
 }
 
 void moveCannon(int dir) {
