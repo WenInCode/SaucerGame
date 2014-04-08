@@ -11,58 +11,58 @@
 #define TUNIT 20000		/* time units in microseconds */
 
 pthread_t destRocketThread;
+extern struct destroyer destShip;
 
-static void 	initDestroyer(struct destroyer *, int, int);
-static void 	animateDestroyer(struct destroyer *);
+static void 	initDestroyer(int, int);
+static void 	animateDestroyer();
 /*
  * Only send the destroyer if it is not already
  * present.
  */
-void *sendDestroyer(void *arg) {
-	struct destroyer *ship = arg;
+void *sendDestroyer() {
 	srand(getpid());
 
 	while(1) {
-		if (!ship->isAlive) {
+		if (!destShip.isAlive) {
 			sleep(10 + (rand()%20));
 		
 			// initialize the destroyer
-			initDestroyer(ship, rand()%15, 1+(rand()%10));
-			pthread_create(&destRocketThread, NULL, shootDestRocket, ship);
-			animateDestroyer(ship);
+			initDestroyer(rand()%15, 1+(rand()%10));
+			pthread_create(&destRocketThread, NULL, shootDestRocket, &destShip);
+			animateDestroyer();
 		}	
 	}
 }
 
-void initDestroyer(struct destroyer *ship, int row, int delay) {
-	strncpy(ship->topMessage, DESTROYER_TOP, DESTROYER_LEN);
-	strncpy(ship->botMessage, DESTROYER_BOT, DESTROYER_LEN);
-	ship->length = DESTROYER_LEN;
-	ship->row = row;
-	ship->col = 0;
-	ship->dir = 1;
-	ship->delay = delay;
-	ship->hit = 0;
-	ship->isAlive = 1;
+void initDestroyer(int row, int delay) {
+	strncpy(destShip.topMessage, DESTROYER_TOP, DESTROYER_LEN);
+	strncpy(destShip.botMessage, DESTROYER_BOT, DESTROYER_LEN);
+	destShip.length = DESTROYER_LEN;
+	destShip.row = row;
+	destShip.col = 0;
+	destShip.dir = 1;
+	destShip.delay = delay;
+	destShip.hit = 0;
+	destShip.isAlive = 1;
 }
 
-void animateDestroyer(struct destroyer *ship) {
+void animateDestroyer() {
 	int i;
 
 	while (1) {
-		usleep(ship->delay*TUNIT);
+		usleep(destShip.delay*TUNIT);
 		
 		pthread_mutex_lock(&mx);
-		move(ship->row, ship->col);
+		move(destShip.row, destShip.col);
 		addch(' ');
-		addnstr(ship->topMessage, DESTROYER_LEN);
+		addnstr(destShip.topMessage, DESTROYER_LEN);
 		addch(' ');
 		move(LINES-1, COLS-1);
 		refresh();
 
-		move(ship->row + 1, ship->col);
+		move(destShip.row + 1, destShip.col);
 		addch(' ');
-		addnstr(ship->botMessage, DESTROYER_LEN);
+		addnstr(destShip.botMessage, DESTROYER_LEN);
 		addch(' ');
 		move(LINES-1, COLS-1);
 		refresh();
@@ -72,29 +72,29 @@ void animateDestroyer(struct destroyer *ship) {
 		/*
 		 * perform checks;
 		 */
-		if ((ship->col + ship->length + 2) >= COLS && ship->dir == 1)
-			ship->dir = -1;
+		if ((destShip.col + destShip.length + 2) >= COLS && destShip.dir == 1)
+			destShip.dir = -1;
 
-		if (ship->col <= 0 && ship->dir == -1) 
-			ship->dir = 1;
+		if (destShip.col <= 0 && destShip.dir == -1) 
+			destShip.dir = 1;
 		
-		if (ship->hit > 100) {
+		if (destShip.hit > 100) {
 			pthread_mutex_lock(&mx);
-			move(ship->row, ship->col);
-			for (i=0; i <= ship->length; i++)
+			move(destShip.row, destShip.col);
+			for (i=0; i <= destShip.length; i++)
 				addch(' ');
-			move(ship->row + 1, ship->col);
-			for (i=0; i <= ship->length; i++)
+			move(destShip.row + 1, destShip.col);
+			for (i=0; i <= destShip.length; i++)
 				addch(' ');
 			move(LINES-1, COLS-1);
 			refresh();
 			pthread_mutex_unlock(&mx);
 			break;
 		}
-		ship->col += ship->dir;
+		destShip.col += destShip.dir;
 	}
 
-	ship->isAlive = 0;
+	destShip.isAlive = 0;
 	
 	pthread_cancel(destRocketThread);
 	pthread_exit(NULL);

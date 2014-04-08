@@ -20,5 +20,5 @@ struct	destroyer {
 	int	isAlive;			/* +1 or 0 	*/
 };
 
-void 	*sendDestroyer(void *); 
+void 	*sendDestroyer(); 
 #endif

@@ -92,7 +92,7 @@ int main(int ac, char *av[])
 		endwin();
 		exit(0);
 	} 	
-	pthread_create(&destroyerThread, NULL, sendDestroyer, &destShip); 
+	pthread_create(&destroyerThread, NULL, sendDestroyer, NULL); 
 	pthread_create(&collisionThread, NULL, collisionDetection, NULL);
 	pthread_create(&gameMonitor, NULL, checkEndConditions, NULL);
 
