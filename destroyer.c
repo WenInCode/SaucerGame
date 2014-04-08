@@ -97,5 +97,4 @@ void animateDestroyer() {
 	destShip.isAlive = 0;
 	
 	pthread_cancel(destRocketThread);
-	pthread_exit(NULL);
 }

@@ -54,6 +54,8 @@ int 	noEscaped = 0;
 int 	endGame = 0;
 int	rocketsLeft = MAX_ROCKETS;
 
+FILE *logfile;
+
 int main(int ac, char *av[])
 {
 	int	       	i, c, quitFlag;		/* user input		*/
@@ -62,6 +64,8 @@ int main(int ac, char *av[])
 	pthread_t	gameMonitor;
 	void	      	*animate();	/* the function		*/
 	
+	logfile = fopen("log.txt", "a");
+
 	quitFlag = 0;
 
 	setup();
@@ -119,6 +123,7 @@ int main(int ac, char *av[])
 	}
 	pthread_cancel(collisionThread);
 	pthread_cancel(gameMonitor);
+	fclose(logfile);
 	endwin();
 	return 0;
 }
@@ -265,14 +270,16 @@ void compareCoords(int i, int j) {
 	/*
 	 * Check if the rocket has hit the destroyer (only one at a time)
 	 */
-	if (rockets[j].isAlive && destShip.isAlive
+	if (rockets[j].isAlive == 1 
+		&& destShip.isAlive == 1
 		&& rockets[j].col >= destShip.col
 		&& rockets[j].col <= (destShip.col + destShip.length)
 		&& (rockets[j].row == (destShip.row + 1)
 		|| rockets[j].row == (destShip.row + 2))) {
 
                 rockets[j].hit = 1;
-		destShip.hit += 1;
+		destShip.hit++;
+		fprintf(logfile, "SHIP HIT COUNT: %d\n", destShip.hit);
 	}
 }
 
