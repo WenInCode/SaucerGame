@@ -240,6 +240,7 @@ void *collisionDetection() {
 				compareCoords(i, j);	
 			}
 		} 
+		
 	}
 }
 
@@ -259,6 +260,21 @@ void compareCoords(int i, int j) {
 			saucers[i].hit = 1;
 			rockets[j].hit = 1;
 		}
+	}
+	
+	/*
+	 * Check if the rocket has hit the destroyer (only one at a time)
+	 */
+	if (rockets[j].isAlive && destShip.isAlive
+		&& rockets[j].col >= destShip.col
+		&& rockets[j].col <= (destShip.col + destShip.length)
+		&& rockets[j].row == (destShip.row + 1)
+		|| rockets[j].row == (destShip.row + 2)) {
+		/*
+		 * HIT!
+		 */
+		rockets[j].hit = 1;
+		destShip.hit += 1;
 	}
 }
 
