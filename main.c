@@ -268,12 +268,10 @@ void compareCoords(int i, int j) {
 	if (rockets[j].isAlive && destShip.isAlive
 		&& rockets[j].col >= destShip.col
 		&& rockets[j].col <= (destShip.col + destShip.length)
-		&& rockets[j].row == (destShip.row + 1)
-		|| rockets[j].row == (destShip.row + 2)) {
-		/*
-		 * HIT!
-		 */
-		rockets[j].hit = 1;
+		&& (rockets[j].row == (destShip.row + 1)
+		|| rockets[j].row == (destShip.row + 2))) {
+
+                rockets[j].hit = 1;
 		destShip.hit += 1;
 	}
 }

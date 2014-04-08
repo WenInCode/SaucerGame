@@ -5,6 +5,7 @@
 #define DESTROYER_TOP "  -------^-------  "
 #define DESTROYER_BOT "<[_______________]>"
 #define DESTROYER_LEN 19
+#define	DESTROYER_HEALTH 5 
 #define MAX_DESTROYERS 1
 
 struct	destroyer {

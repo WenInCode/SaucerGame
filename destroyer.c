@@ -3,13 +3,14 @@
 #include <curses.h>
 #include <pthread.h>
 #include <time.h>
-
 #include "locks.h"
 #include "destroyer.h"
 #include "destroyerrocket.h"
 #include "scores.h"
 
 #define TUNIT 20000		/* time units in microseconds */
+
+pthread_t destRocketThread;
 
 static void 	initDestroyer(struct destroyer *, int, int);
 static void 	animateDestroyer(struct destroyer *);
@@ -18,7 +19,6 @@ static void 	animateDestroyer(struct destroyer *);
  * present.
  */
 void *sendDestroyer(void *arg) {
-	pthread_t destRocketThread;
 	struct destroyer *ship = arg;
 	srand(getpid());
 
@@ -47,6 +47,8 @@ void initDestroyer(struct destroyer *ship, int row, int delay) {
 }
 
 void animateDestroyer(struct destroyer *ship) {
+	int i;
+
 	while (1) {
 		usleep(ship->delay*TUNIT);
 		
@@ -75,7 +77,25 @@ void animateDestroyer(struct destroyer *ship) {
 
 		if (ship->col <= 0 && ship->dir == -1) 
 			ship->dir = 1;
-
+		
+		if (ship->hit > 100) {
+			pthread_mutex_lock(&mx);
+			move(ship->row, ship->col);
+			for (i=0; i <= ship->length; i++)
+				addch(' ');
+			move(ship->row + 1, ship->col);
+			for (i=0; i <= ship->length; i++)
+				addch(' ');
+			move(LINES-1, COLS-1);
+			refresh();
+			pthread_mutex_unlock(&mx);
+			break;
+		}
 		ship->col += ship->dir;
 	}
+
+	ship->isAlive = 0;
+	
+	pthread_cancel(destRocketThread);
+	pthread_exit(NULL);
 }
