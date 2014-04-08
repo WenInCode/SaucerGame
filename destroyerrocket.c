@@ -21,7 +21,7 @@ void *shootDestRocket(void *args) {
 	srand(getpid());
 
 	while (1) {
-		if (!destRocket.isAlive) {
+		if (!destRocket.isAlive && destRocket.hit < 1) {
 			sleep(1 + (rand()%3));
 				
 			initDestRocket(ship);
@@ -52,7 +52,7 @@ void animateDestRocket() {
 	refresh();
 	pthread_mutex_unlock(&mx);
 
-	while (1) {
+	while (destRocket.isAlive) {
 		usleep(destRocket.delay * TUNIT);
 		pthread_mutex_lock(&mx);
 		move(destRocket.row, destRocket.col);
@@ -66,10 +66,12 @@ void animateDestRocket() {
 
 		if (destRocket.row >= LINES-2) {
 			eraseDestroyerRocket();
-			break;
-		}	
+			destRocket.isAlive = 0;
+		} else if (destRocket.hit > 0) {
+			eraseDestroyerRocket();
+			destRocket.isAlive = 0;
+		}
 	}
-	destRocket.isAlive = 0;
 }
 
 void eraseDestroyerRocket() {

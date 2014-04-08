@@ -10,16 +10,16 @@
 
 #define TUNIT 20000		/* time units in microseconds */
 
-pthread_t destRocketThread;
 
 static void 	initDestroyer(struct destroyer *, int, int);
-static void 	animateDestroyer(struct destroyer *);
+static void 	animateDestroyer(pthread_t, struct destroyer *);
 /*
  * Only send the destroyer if it is not already
  * present.
  */
 void *sendDestroyer(void *arg) {
 	struct destroyer *ship = arg;
+	pthread_t destRocketThread;
 	srand(getpid());
 
 	while(1) {
@@ -29,7 +29,7 @@ void *sendDestroyer(void *arg) {
 			// initialize the destroyer
 			initDestroyer(ship, rand()%15, 1+(rand()%10));
 			pthread_create(&destRocketThread, NULL, shootDestRocket, ship);
-			animateDestroyer(ship);
+			animateDestroyer(destRocketThread, ship);
 		}	
 	}
 }
@@ -46,7 +46,7 @@ void initDestroyer(struct destroyer *ship, int row, int delay) {
 	ship->isAlive = 1;
 }
 
-void animateDestroyer(struct destroyer *ship) {
+void animateDestroyer(pthread_t thread, struct destroyer *ship) {
 	int i;
 
 	while (1) {
@@ -96,5 +96,5 @@ void animateDestroyer(struct destroyer *ship) {
 
 	ship->isAlive = 0;
 	eraseDestroyerRocket();		
-	pthread_cancel(destRocketThread);
+	pthread_cancel(thread);
 }

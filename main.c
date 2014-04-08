@@ -120,6 +120,7 @@ int main(int ac, char *av[])
 		pthread_cancel(rocketThreads[i]);
 	}
 	pthread_cancel(collisionThread);
+	pthread_cancel(destCollisionThread);
 	pthread_cancel(gameMonitor);
 	endwin();
 	return 0;
@@ -143,6 +144,7 @@ void *checkEndConditions() {
 	for (i = 0; i < MAX_SAUCERS; i++) {
 		pthread_cancel(sThread[i]);
 	}
+	pthread_cancel(destroyerThread);
 	pthread_cancel(saucerSetup);
 }
 
