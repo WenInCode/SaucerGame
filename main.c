@@ -28,6 +28,9 @@
 #define ENDGAME 15		/* end game condition */
 #define	TUNIT   20000		/* timeunits in microseconds */
 
+/*
+ * Static functions
+ */
 static void 	setup();
 static void	shootRocket(int);
 static void 	*collisionDetection();
@@ -37,24 +40,52 @@ static void 	printStartMessage();
 static void 	*checkEndConditions();
 static void 	*checkDestRocketCollision();
 
+/*
+ * mutex lock that is used to monitor curses operations
+ */
 pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
 
+/*
+ * rocketThreads is an arry of pthreads used for each rocket
+ * rockets is an array of structures used for each rocket 
+ */
 pthread_t	rocketThreads[MAX_ROCKETS];
 struct rocket 	rockets[MAX_ROCKETS];
 
+/*
+ * sThread is an array of pthreads used for each saucer
+ * saucers is an array of structuresused for each saucer
+ */
 pthread_t	sThread[MAX_SAUCERS];
 struct saucer saucers[MAX_SAUCERS];
 
+/*
+ * destroyerThread is a single thread used for the destroyer saucer
+ *
+ * destShip is a structure that is used for the destroyer
+ * destRocket is a structure that is used for the destroyers rocket
+ */
 pthread_t	destroyerThread;
 struct destroyer destShip;
 struct destroyerRocket destRocket;
 
+/*
+ * saucerSetup is a pthread used for generating saucers at random intervals
+ */
 pthread_t	saucerSetup;
 
+/*
+ * Global flags used for end-game conditions
+ */
 int 	noEscaped = 0;
 int 	endGame = 0;
 int	rocketsLeft = MAX_ROCKETS;
 
+/*
+ * The main function does all the game setup which includes creating all of
+ * the threads.
+ * The main functions main use is to receive input until the game has ended.
+ */
 int main(int ac, char *av[])
 {
 	int	       	i, c, quitFlag, twoPlayer;		
@@ -145,6 +176,11 @@ int main(int ac, char *av[])
 	return 0;
 }
 
+/*
+ * checkEndConditions runs on a separate thread, called gameMonitor, and 
+ * it's main purpose is to constantly check. If the game has reached a 
+ * state which is deemed game-ending
+ */
 void *checkEndConditions() {
 	int i;
 
@@ -167,6 +203,9 @@ void *checkEndConditions() {
 	pthread_cancel(saucerSetup);
 }
 
+/*
+ * prints the starting menu
+ */
 void printStartMessage() {
 	char *titleMsg = "---SAUCER INVADERS!---";
 	char *playerOne = "PLAYER ONE CONTROLS:";
@@ -183,31 +222,31 @@ void printStartMessage() {
 	char *pTwoStartMsg = "Press '2' to start two player game";
 
 	pthread_mutex_lock(&mx);
-	move(((LINES-1)/2), (((COLS-1)/2)-10));
+	move(((LINES-1)/2), (((COLS-1)/2)-20));
 	addstr(titleMsg);
-	move((((LINES-1)/2)+1), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+1), (((COLS-1)/2)-20));
 	addstr(playerOne);
-	move((((LINES-1)/2)+2), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+2), (((COLS-1)/2)-20));
 	addstr(rightMoveMsg);
-	move((((LINES-1)/2)+3), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+3), (((COLS-1)/2)-20));
 	addstr(leftMoveMsg);
-	move((((LINES-1)/2)+4), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+4), (((COLS-1)/2)-20));
 	addstr(shootMsg);
-	move((((LINES-1)/2)+5), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+5), (((COLS-1)/2)-20));
 	addstr(playerTwo);
-	move((((LINES-1)/2)+6), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+6), (((COLS-1)/2)-20));
 	addstr(pTwoRightMoveMsg);
-	move((((LINES-1)/2)+7), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+7), (((COLS-1)/2)-20));
 	addstr(pTwoLeftMoveMsg);
-	move((((LINES-1)/2)+8), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+8), (((COLS-1)/2)-20));
 	addstr(pTwoShootMsg);
-	move((((LINES-1)/2)+9), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+9), (((COLS-1)/2)-20));
 	addstr(quitMsg);
-	move((((LINES-1)/2)+10), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+10), (((COLS-1)/2)-20));
 	addstr(header);
-	move((((LINES-1)/2)+11), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+11), (((COLS-1)/2)-20));
 	addstr(startMsg);
-	move((((LINES-1)/2)+12), (((COLS-1)/2)-10));
+	move((((LINES-1)/2)+12), (((COLS-1)/2)-20));
 	addstr(pTwoStartMsg);
 
 	move(LINES-1, COLS-1);	
@@ -215,6 +254,9 @@ void printStartMessage() {
 	pthread_mutex_unlock(&mx);
 }
 
+/*
+ * prints the ending message, if you've let too many saucers escape
+ */
 void printEndGameMessage(char *Message) {
 	char *gameOver = "GAME OVER!!!";
 	char *quitMessage = "PRESS Q TO QUIT";
@@ -230,6 +272,9 @@ void printEndGameMessage(char *Message) {
 	pthread_mutex_unlock(&mx);
 }
 
+/*
+ * starts a rocket thread, and decrements the rockets left
+ */
 void shootRocket(int player) {
 	int 	i;
 	int 	col = getCannonCol(player);
@@ -240,7 +285,8 @@ void shootRocket(int player) {
 		for (i = 0; i < MAX_ROCKETS; i++) {
 			if (rockets[i].isAlive == 0) {
 				rockets[i].col = col;
-				pthread_create(&rocketThreads[i], NULL, setupRocket, &rockets[i]);	
+				pthread_create(&rocketThreads[i], 
+				    NULL, setupRocket, &rockets[i]);	
 				break;
 			}
 		}
@@ -248,6 +294,10 @@ void shootRocket(int player) {
 			
 }
 
+/*
+ * setupSaucer runs on a seperate thread and creates new saucers at
+ * randome intervals
+ */
 void *setupSaucer() {
 	int num_msg = 1;
 	int i;
@@ -272,10 +322,15 @@ void *setupSaucer() {
 			} 
 		}
 
-		sleep(1+(rand()%15));
+		sleep(1+(rand()%7));
 	}
 }
 
+
+/*
+ * collisionDetection runs on a separate thread and makes calls to comparCoords
+ * to check if any live saucers have collided with any live rockets
+ */
 void *collisionDetection() {
 	int i, j;
 
@@ -289,6 +344,9 @@ void *collisionDetection() {
 	}
 }
 
+/*
+ * checks if saucer[i] and rocket[j] have collided
+ */
 void compareCoords(int i, int j) {
 	/*
 	 * Check here if any coords match
@@ -322,6 +380,10 @@ void compareCoords(int i, int j) {
 	}
 }
 
+/*
+ * checks if a live destroyer rocket has collided with one of the users
+ * cannons
+ */
 void *checkDestRocketCollision() {
 	int col;
 	while (1) {

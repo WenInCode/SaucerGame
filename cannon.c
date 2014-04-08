@@ -10,6 +10,9 @@
 static struct cannon	cn;
 static struct cannon	cn2;
 
+/*
+ * initializes the cannon
+ */
 void setupCannon(int players) {
 	int col;
 	if (players == 1) {
@@ -33,6 +36,9 @@ void setupCannon(int players) {
 	cn.delay = 1;
 }
 
+/*
+ * returns the players cannons column
+ */
 int getCannonCol(int player) {
 	if (player == 1) {
 		return cn.col;
@@ -41,6 +47,9 @@ int getCannonCol(int player) {
 	}
 }
 
+/* 
+ * returns if player's cannon has been hit
+ */
 int getCannonHit(int player) {
 	if (player == 1) {
 		return cn.hit;
@@ -49,6 +58,9 @@ int getCannonHit(int player) {
 	}
 }
 
+/*
+ * sets the player's cannon to hit
+ */
 void setCannonHit(int player) {
 	if (player == 1) {
 		cn.hit = 1;
