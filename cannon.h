@@ -13,11 +13,11 @@ struct	cannon {
 	int	delay;
 };
 
-void	setupCannon();
-int 	getCannonCol();
-int	getCannonHit();
-void	setCannonHit();
-void	moveCannon(int);
-void	displayCannon();
+void	setupCannon(int);
+int 	getCannonCol(int);
+int	getCannonHit(int);
+void	setCannonHit(int);
+void	moveCannon(int, int);
+void	displayCannon(int);
 
 #endif
