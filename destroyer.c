@@ -95,7 +95,6 @@ void animateDestroyer(struct destroyer *ship) {
 	}
 
 	ship->isAlive = 0;
-	
+	eraseDestroyerRocket();		
 	pthread_cancel(destRocketThread);
-	pthread_exit(NULL);
 }

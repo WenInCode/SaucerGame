@@ -16,6 +16,7 @@ struct destroyerRocket {
 	int 	isAlive;
 };
 
+void eraseDestroyerRocket();
 void *shootDestRocket(void *);
 
 #endif

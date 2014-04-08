@@ -65,15 +65,19 @@ void animateDestRocket() {
 		pthread_mutex_unlock(&mx);
 
 		if (destRocket.row >= LINES-2) {
-			pthread_mutex_lock(&mx);
-			move(destRocket.row, destRocket.col);
-			addnstr("                   ", 
-				DESTROYER_ROCKET_LEN);
-			move(LINES-1, COLS-1);
-			refresh();
-			pthread_mutex_unlock(&mx);
+			eraseDestroyerRocket();
 			break;
 		}			
 	}
 	destRocket.isAlive = 0;
+}
+
+void eraseDestroyerRocket() {
+	pthread_mutex_lock(&mx);
+	move(destRocket.row, destRocket.col);
+	addnstr("                   ", 
+		DESTROYER_ROCKET_LEN);
+	move(LINES-1, COLS-1);
+	refresh();
+	pthread_mutex_unlock(&mx);
 }

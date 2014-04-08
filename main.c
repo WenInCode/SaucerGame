@@ -265,7 +265,8 @@ void compareCoords(int i, int j) {
 	/*
 	 * Check if the rocket has hit the destroyer (only one at a time)
 	 */
-	if (rockets[j].isAlive && destShip.isAlive
+	if (rockets[j].isAlive == 1 
+		&& destShip.isAlive == 1
 		&& rockets[j].col >= destShip.col
 		&& rockets[j].col <= (destShip.col + destShip.length)
 		&& (rockets[j].row == (destShip.row + 1)
