@@ -1,0 +1,67 @@
+**** User Documentation
+
+How to compile: $: make
+How to run: $: ./game
+
+Upon Game Startup, a main menu will be displayed which displays the title, 
+controls, how to quit and how to start playing. Once the game has started
+use the ',' key to move left, and the '.' key to move right. The SPACE key
+is used to fire rockets. Fire rockets to destroy the saucers of the form 
+'<--->' before they escape the screen and to defeat destroyers before they
+destroy your defenses.
+
+Destroyer:
+	  _______________
+	 <_______________>
+
+Press 'Q' to quit at any time.
+Upon Defeat, either by too many saucers escaping, or by destroyed defenses,
+the game will pause and display a message. Press 'Q' to exit.
+
+**** Developer Documentation
+
+** Code Structure
+
+main.c:
+=======
+the main function
+
+** Threads
+Main thread: 
+is the game loop, and is reserved for input handling.
+
+rocketThreads: 
+each rocketThread is meant for an individual rocket, which
+is shot by the users cannon when the space key is pressed. This thread
+moves the rocket structure along a coordinate path and updates the screen
+for each frame.
+
+saucerSetup:
+saucer setup is thread that splits off from the main immediately and generates
+the new saucers. It does so by sleeping for random intervals between each 
+saucer creation.
+
+sThread: 
+sThreads are the threads for the default saucers. Each saucer has it's own
+thread. These threads are responsible for initializing the saucer's struct,
+altering the saucer's coordinates, and updating the screen after each frame.
+
+destroyerThread:
+The destroyer thread is reserved for the improved saucers, which do not leave
+the screen and attack back. Much like sThread, destroyerThread is responsible
+for a single saucer, it initializes the structure, alters the coordinates, and
+updates the screen. Also destroyerThreads create a second thread for each of
+the destroyer's rockets.
+
+destroyerRocketThread:
+Much like the regulare rocketThread, the destroyerRocketThread is meant for 
+and individual rocket. It initializes the structure, updates the coordinates,
+and displays it to the screen.
+
+collisionThread:
+
+destCollisionThread:
+
+gameMonitor:
+
+** Critical Sections
