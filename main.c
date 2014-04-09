@@ -244,7 +244,7 @@ void printStartMessage() {
 }
 
 /*
- * prints the ending message, if you've let too many saucers escape
+ * prints the ending message
  */
 void printEndGameMessage(char *Message) {
 	char *gameOver = "GAME OVER!!!";

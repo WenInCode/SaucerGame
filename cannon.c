@@ -90,7 +90,7 @@ void moveCannon(int dir, int player) {
  * displays the cannon on the screen
  */
 void displayCannon(int player) {
-	usleep(cn.delay*TUNIT);
+	//usleep(cn.delay*TUNIT);
 	pthread_mutex_lock(&mx);
 	
 	if (player == 1) {
