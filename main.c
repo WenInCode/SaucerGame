@@ -1,14 +1,3 @@
-/*
- * tanimate.c: animate several strings using threads, curses, usleep()
- *
- *	bigidea one thread for each animated string
- *		one thread for keyboard control
- *		shared variables for communication
- *	compile	cc tanimate.c -lcurses -lpthread -o tanimate
- *	to do   needs locks for shared variables
- *	        nice to put screen handling in its own thread
- */
-
 #include	<stdio.h>
 #include	<curses.h>
 #include	<pthread.h>
@@ -222,31 +211,31 @@ void printStartMessage() {
 	char *pTwoStartMsg = "Press '2' to start two player game";
 
 	pthread_mutex_lock(&mx);
-	move(((LINES-1)/2), (((COLS-1)/2)-20));
+	move(((LINES-1)/4), (((COLS-1)/2)-20));
 	addstr(titleMsg);
-	move((((LINES-1)/2)+1), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+1), (((COLS-1)/2)-20));
 	addstr(playerOne);
-	move((((LINES-1)/2)+2), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+2), (((COLS-1)/2)-20));
 	addstr(rightMoveMsg);
-	move((((LINES-1)/2)+3), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+3), (((COLS-1)/2)-20));
 	addstr(leftMoveMsg);
-	move((((LINES-1)/2)+4), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+4), (((COLS-1)/2)-20));
 	addstr(shootMsg);
-	move((((LINES-1)/2)+5), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+5), (((COLS-1)/2)-20));
 	addstr(playerTwo);
-	move((((LINES-1)/2)+6), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+6), (((COLS-1)/2)-20));
 	addstr(pTwoRightMoveMsg);
-	move((((LINES-1)/2)+7), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+7), (((COLS-1)/2)-20));
 	addstr(pTwoLeftMoveMsg);
-	move((((LINES-1)/2)+8), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+8), (((COLS-1)/2)-20));
 	addstr(pTwoShootMsg);
-	move((((LINES-1)/2)+9), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+9), (((COLS-1)/2)-20));
 	addstr(quitMsg);
-	move((((LINES-1)/2)+10), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+10), (((COLS-1)/2)-20));
 	addstr(header);
-	move((((LINES-1)/2)+11), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+11), (((COLS-1)/2)-20));
 	addstr(startMsg);
-	move((((LINES-1)/2)+12), (((COLS-1)/2)-20));
+	move((((LINES-1)/4)+12), (((COLS-1)/2)-20));
 	addstr(pTwoStartMsg);
 
 	move(LINES-1, COLS-1);	
