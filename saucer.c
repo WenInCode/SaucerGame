@@ -23,6 +23,9 @@ void initSaucer(struct saucer *ship, int row, int delay) {
 	ship->isAlive = 1;
 }
 
+/*
+ * animates the saucer until it is shot or leaves the scream
+ */
 void *animateSaucer(void *arg) {
 	struct saucer *ship = arg;
 	int len = ship->length+2;

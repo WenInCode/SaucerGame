@@ -16,6 +16,10 @@ extern struct destroyerRocket destRocket;
 static void	animateDestRocket();
 static void 	initDestRocket(struct destroyer *);
 
+/*
+ * creates a destroyer rocket at random times, as long as the destroyer is
+ * alive. 
+ */
 void *shootDestRocket(void *args) {
 	struct destroyer *ship = args;
 	srand(getpid());
@@ -30,6 +34,9 @@ void *shootDestRocket(void *args) {
 	}
 }	
 
+/*
+ * initializes the destroyer rocket with the appropriate attributes
+ */
 void initDestRocket(struct destroyer *ship) {
 	strncpy(destRocket.message, DESTROYER_ROCKET, DESTROYER_ROCKET_LEN);
 	destRocket.length = DESTROYER_ROCKET_LEN;
@@ -41,6 +48,10 @@ void initDestRocket(struct destroyer *ship) {
 	destRocket.isAlive = 1;
 }
 
+/*
+ * animates the destroyer rocket with ncurses, until the rocket leaves the
+ * screen
+ */
 void animateDestRocket() {
 	/*
 	 * draw initial rocket
@@ -74,6 +85,9 @@ void animateDestRocket() {
 	}
 }
 
+/*
+ * erases the destroyerRocket
+ */
 void eraseDestroyerRocket() {
 	pthread_mutex_lock(&mx);
 	move(destRocket.row, destRocket.col);
