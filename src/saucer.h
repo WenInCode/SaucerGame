@@ -22,7 +22,6 @@ struct	saucer {
 };
 
 void initSaucer(struct saucer *, int, int);
-void *setupSaucer();
 void *animateSaucer(void *);
 
 #endif

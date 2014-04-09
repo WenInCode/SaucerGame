@@ -15,7 +15,7 @@ struct	cannon {
 
 void	setupCannon(int);
 int 	getCannonCol(int);
-int	getCannonHit(int);
+int		getCannonHit(int);
 void	setCannonHit(int);
 void	moveCannon(int, int);
 void	displayCannon(int);

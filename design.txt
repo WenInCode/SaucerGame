@@ -1,3 +1,5 @@
+Assignment 3 - Tyler Wendlandt
+
 **** User Documentation
 
 How to compile: $: make all
@@ -56,14 +58,17 @@ void setRocketsToDead(struct rocket *r):
 Displaying Info & Menu Output:
 ==============================
 void printStartMessage():
-	prints the start menu that displays the controls for player 1 and 2. How to quit and start the game
+	prints the start menu that displays the controls for player 1 and 2. How to 
+	quit and start the game
 
 void printEndGameMessage(char *message):
 	INPUT: char *message
-	prints the game over message to the screen which includes the detailed message, the input.
+	prints the game over message to the screen which includes the detailed 
+	message, the input.
 
 void displayInfo():
-	prints the current info at the bottom of the screen, this includes how to quit, escaped saucers, rockets left.
+	prints the current info at the bottom of the screen, this includes how to 
+	quit, escaped saucers, rockets left.
 
 void eraseInfo():
 	deletes the current info from the screen
@@ -71,14 +76,21 @@ void eraseInfo():
 Collision Detection:
 ====================
 void *collisionDetection():
-	collisionDetection runs on a separate thread. it iterates through all the saucers and rockets and makes a call to compareCoords to check if they are occupying the same coordinates at any given time.
+	collisionDetection runs on a separate thread. it iterates through all the 
+	saucers and rockets and makes a call to compareCoords to check if they are 
+	occupying the same coordinates at any given time.
 
 void compareCoords(int i, int j):
 	INPUT: int i, int j
-	compareCoords checks if saucer[i] is alive and if it is occupying the same coordinates as an alive rocket[j]. if so, there has been a collision and the saucer & rocket are destroyed. The remaining rockets are incremented.compareCoords also checks if rocket[j] has hit the destroyer, if the destroyer is currently alive.
+	compareCoords checks if saucer[i] is alive and if it is occupying the same 
+	coordinates as an alive rocket[j]. if so, there has been a collision and 
+	the saucer & rocket are destroyed. The remaining rockets are incremented.
+	compareCoords also checks if rocket[j] has hit the destroyer, if the 
+	destroyer is currently alive.
 
 void *checkDestRocketCollision():
-	checks if the current, alive, destroyer rocket has hit any of the player's cannons.
+	checks if the current, alive, destroyer rocket has hit any of the player's 
+	cannons.
 
 Cannon:
 =======
@@ -92,44 +104,55 @@ int getCannonCol(int player):
 
 int getCannonHit(int player):
 	INPUT: int player
-	returns whether a specific player's cannon has been hit by a destroyer rocket or not.
+	returns whether a specific player's cannon has been hit by a destroyer 
+	rocket or not.
 
 void setCannonHit(int player):
 	INPUT: int player
-	sets the specific player's cannon's hit attribute to 1 to indicate it has been hit by a destroyer rocket
+	sets the specific player's cannon's hit attribute to 1 to indicate it has 
+	been hit by a destroyer rocket
 
 void moveCannon(int dir, int player):
 	INPUT: int dir (-1 or 1), int player (1 or 2)
-	adds dir to a specific player's cannon's col attribute to indicate it has moved in said direction (1 for right, -1 for left). It then calls displayCannon(player).
+	adds dir to a specific player's cannon's col attribute to indicate it has 
+	moved in said direction (1 for right, -1 for left). It then calls 
+	displayCannon(player).
 
 void displayCannon(int player):
 	INPUT: int player (1 or 2)
-	makes the call to curses to display the new position of the specific player's cannon to the screen, using curses.
+	makes the call to curses to display the new position of the specific 
+	player's cannon to the screen, using curses.
 
 
 
 Saucers (Spawning & lifecycle):
 ===============================
 void *setupSaucer():
-	runs on a separate thread. Creates new saucers at random intervals. When a new saucer is created a new thread is spawned for that saucer.
+	runs on a separate thread. Creates new saucers at random intervals. When 
+	a new saucer is created a new thread is spawned for that saucer.
 
 void initSaucer(struct saucer *ship, int row, int delay):
 	INPUT: struct saucer *ship, int delay, int row
-	initializes the saucer structure with appropriate attributes, such as it's row, speed, etc.
+	initializes the saucer structure with appropriate attributes, such as it's 
+	row, speed, etc.
 
 void *animateSaucer(void *arg):
 	INPUT: void *arg (the saucer)
-	this function animates the saucer by moving it along the screen and making the appropriate calls to curses to display it.
+	this function animates the saucer by moving it along the screen and making 
+	the appropriate calls to curses to display it.
 
 Rockets (Spawning & lifecycle):
 ===============================
 void shootRocket(int player):
 	INPUT: int player (either 1 or 2)
-	starts a rocket thread and decrements the rockets left. Finds the first rocket that has the attribute isAlive set to 0 makes a call to activate/animate that rocket. The new rocket is animated on a new thread.
+	starts a rocket thread and decrements the rockets left. Finds the first 
+	rocket that has the attribute isAlive set to 0 makes a call to 
+	activate/animate that rocket. The new rocket is animated on a new thread.
 
 void *setupRocket(void *arg):
 	INPUT: void *arg (the rocket)
-	makes a call to initRocket to set the rocket's attributes and then calls animateRocket.
+	makes a call to initRocket to set the rocket's attributes and then calls 
+	animateRocket.
 
 void initRocket(struct rocket *r)
 	INPUT: struct rocket *r
@@ -137,13 +160,17 @@ void initRocket(struct rocket *r)
 
 void animateRocket(struct rocket *r)
 	INPUT: struct rocket *r
-	this function animates the rocket by moving it along the screen and making the appropriate calls to curses to display it. Once the rocket has left the screen, or hit something, it erases itself and sets it's isAlive attribute to 0.
+	this function animates the rocket by moving it along the screen and making 
+	the appropriate calls to curses to display it. Once the rocket has left the 
+	screen, or hit something, it erases itself and sets it's isAlive attribute 
+	to 0.
 
 Destroyer (Spawning & lifecycle):
 =================================
 void *sendDestroyer(void *arg):
 	INPUT: void *arg (destroyer structure)
-	creates a new destroyer in random intervals. Only one can be alive at a time. Makes call
+	creates a new destroyer in random intervals. Only one can be alive at a 
+	time. Makes call
 
 void initDestroyer(struct destroyer *ship, int row, int delay):
 	INPUT: struct destroyer *ship, int row, int delay
@@ -151,20 +178,24 @@ void initDestroyer(struct destroyer *ship, int row, int delay):
 
 animateDestroyer(pthread_t thread, struct destroyer *ship):
 	INPUT: pthread_t thread, struct destroyer *ship
-	moves the destroyer along the screen by updating the coordinates and making the appropriate calls to curses.
+	moves the destroyer along the screen by updating the coordinates and making 
+	the appropriate calls to curses.
 
 Destroyer Rocket:
 ================= 
 void *shootDestRocket(void *args):
 	INPUT: void *args (struct destroyer)
-	generates destroyer rockets at random intervals. it makes the call to initialize and animate the destroyer rocket.
+	generates destroyer rockets at random intervals. it makes the call to 
+	initialize and animate the destroyer rocket.
 
 void initDestRocket(struct destroyer *ship)
 	INPUT: struct destroyer *ship
-	initialize the destroyer rocket with the appropriate starting attributes, such as row, column, speed, etc.
+	initialize the destroyer rocket with the appropriate starting attributes, 
+	such as row, column, speed, etc.
 
 void animateDestRocket():
-	this thread movest the destroyer rocket along the screen by updating it's coordinates and displaying it to the screen with curses.
+	this thread movest the destroyer rocket along the screen by updating it's 
+	coordinates and displaying it to the screen with curses.
 
 void eraseDestroyerRocket()
 	erases the current destroyerRocket from the screen
