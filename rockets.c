@@ -10,12 +10,19 @@
 static void 	initRocket(struct rocket *);
 static void 	animateRocket(struct rocket *);
 
+/*
+ * sets each rockets isAlive field to 0
+ */
 void setRocketsToDead(struct rocket * rockets) {
 	int i;
 	for (i = 0; i < MAX_ROCKETS; i++)
 		rockets[i].isAlive = 0;
 }
 
+/*
+ * makes the appropriate calls to initialize the rocket when it is being 
+ * created and animate it
+ */
 void *setupRocket(void *arg) {
 	struct rocket *r = arg;
 		
@@ -23,6 +30,9 @@ void *setupRocket(void *arg) {
 	animateRocket(r);
 }
 
+/*
+ * initializes the rocket with the appropriate starting attributes
+ */
 void initRocket(struct rocket *r) {
 	strncpy(r->message, ROCKET, ROCKET_LEN);
 	r->length = ROCKET_LEN;
@@ -33,6 +43,9 @@ void initRocket(struct rocket *r) {
 	r->isAlive = 1;
 }
 
+/*
+ * animates the rocket until it dies
+ */
 void animateRocket(struct rocket *r) {
 	int len = r->length;
 

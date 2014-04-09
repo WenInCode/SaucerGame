@@ -13,9 +13,12 @@
 
 static void 	initDestroyer(struct destroyer *, int, int);
 static void 	animateDestroyer(pthread_t, struct destroyer *);
+
 /*
- * Only send the destroyer if it is not already
- * present.
+ * sends a new destroyer at random intervals, if the destroyer is not already
+ * on the screen
+ *
+ * limited to one destroyer at a time.
  */
 void *sendDestroyer(void *arg) {
 	struct destroyer *ship = arg;
@@ -28,12 +31,16 @@ void *sendDestroyer(void *arg) {
 		
 			// initialize the destroyer
 			initDestroyer(ship, rand()%15, 1+(rand()%10));
-			pthread_create(&destRocketThread, NULL, shootDestRocket, ship);
+			pthread_create(&destRocketThread, NULL, 
+			    shootDestRocket, ship);
 			animateDestroyer(destRocketThread, ship);
 		}	
 	}
 }
 
+/*
+ * initialize the destroyer with the appropriate starting attributes
+ */
 void initDestroyer(struct destroyer *ship, int row, int delay) {
 	strncpy(ship->topMessage, DESTROYER_TOP, DESTROYER_LEN);
 	strncpy(ship->botMessage, DESTROYER_BOT, DESTROYER_LEN);
@@ -46,6 +53,9 @@ void initDestroyer(struct destroyer *ship, int row, int delay) {
 	ship->isAlive = 1;
 }
 
+/*
+ * animate the destroyer until it is hit by a rocket
+ */ 
 void animateDestroyer(pthread_t thread, struct destroyer *ship) {
 	int i;
 

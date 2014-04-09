@@ -69,6 +69,9 @@ void setCannonHit(int player) {
 	}
 }
 
+/*
+ * moves the specific player's cannon in the direction given
+ */
 void moveCannon(int dir, int player) {
 	if (player == 1) {
 		cn.col += dir;
@@ -83,6 +86,9 @@ void moveCannon(int dir, int player) {
 	displayCannon(player);
 }
 
+/*
+ * displays the cannon on the screen
+ */
 void displayCannon(int player) {
 	usleep(cn.delay*TUNIT);
 	pthread_mutex_lock(&mx);
