@@ -5,7 +5,10 @@ How to run: $: ./game
 
 Upon Game Startup, a main menu will be displayed which displays the title, 
 controls, how to quit and how to start playing. Once the game has started
-player 1 use the ',' key to move left, and the '.' key to move right; player 2 use the 'c' key to move right, the 'x' key to move left and the 'z' key to shoot a rocket. The SPACE key, for player 1, is used to fire rockets; for player 2 use the 'z' key. Fire rockets to destroy the saucers of the form 
+player 1 use the ',' key to move left, and the '.' key to move right; player 
+2 use the 'c' key to move right, the 'x' key to move left and the 'z' key to 
+shoot a rocket. The SPACE key, for player 1, is used to fire rockets; for 
+player 2 use the 'z' key. Fire rockets to destroy the saucers of the form 
 '<--->' before they escape the screen and to defeat destroyers before they
 destroy your defenses.
 
@@ -13,9 +16,24 @@ Destroyer:
 	  _______________
 	 <_______________>
 
+Some Important Notes:
+	if two saucers are occupying the same space and they get hit by a
+	rocket, only one gets destroyed.
+
+
 Press 'Q' to quit at any time.
 Upon Defeat, either by too many saucers escaping, or by destroyed defenses,
 the game will pause and display a message. Press 'Q' to exit.
+
+IMPROVEMENTS:
+	Destroyer (as shown above) randomly appears in intervals. Doesn't
+	leave the screen, just changes direction. Occupies several rows and
+	shoots back at you with it's super huge cannon. If the destroyer dies
+	it's rocket fades.
+
+	Two Player addition, option in the main menu to play two player.
+	Controls are shown above. Shared rocket pool and score. Help your
+	friends save our planet! Fight the saucers!
 
 **** Developer Documentation
 
@@ -23,7 +41,8 @@ the game will pause and display a message. Press 'Q' to exit.
 
 The main function:
 ==================
-	does all the game setup which includes creating all of the threads. The main functions main use is to receive input until the game has ended.
+	does all the game setup which includes creating all of the threads. 
+	The main functions main use is to receive input until the game has ended.
 
 Setup:
 ======
